@@ -19,8 +19,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post("/register", [AuthController::class, "register"])->name("register");
-Route::post("/login", [AuthController::class, "login"])->name("login");
+Route::post("/register", [AuthController::class, "register"])
+    ->name("register");
+Route::post("/login", [AuthController::class, "login"])
+    ->name("login");
 
 Route::middleware("auth:sanctum")->group(function() {
     Route::get("/test-route", function() {
@@ -28,3 +30,9 @@ Route::middleware("auth:sanctum")->group(function() {
     });
     Route::get("/logout", [AuthController::class, "logout"])->name("logout");
 });
+
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, "verifyEmail"])
+    ->middleware(['signed'])
+    ->name('verification.verify');
+
+Route::post('/email/verification-notification', [AuthController::class, "sendEmailVerification"])->middleware(['auth', 'throttle:6,1'])->name('verification.send');
